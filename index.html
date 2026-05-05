@@ -17,7 +17,10 @@
     </header>
 
     <section class="card">
-      <h2>Nowy wpis dnia</h2>
+      <div class="section-head">
+        <h2 id="formTitle">Nowy wpis dnia</h2>
+        <span id="editBadge" class="badge hidden">Tryb edycji</span>
+      </div>
 
       <form id="entryForm" class="form">
         <div class="grid">
@@ -42,8 +45,8 @@
           </label>
 
           <label>
-            <span>Czas jazdy</span>
-            <input type="time" id="drivingTime" required />
+            <span>Czas jazdy (HH:MM)</span>
+            <input type="text" id="drivingTime" placeholder="np. 08:35" required />
           </label>
 
           <label>
@@ -54,67 +57,4 @@
 
         <label>
           <span>Lokalizacja końca dnia</span>
-          <input type="text" id="locationText" readonly placeholder="Kliknij „Pobierz lokalizację”" />
-        </label>
-
-        <div class="actions">
-          <button type="button" id="getLocationBtn">Pobierz lokalizację</button>
-          <button type="button" id="copyLocationBtn" class="secondary">Kopiuj współrzędne</button>
-        </div>
-
-        <label>
-          <span>Notatka</span>
-          <textarea id="note" rows="3" placeholder="Opcjonalnie"></textarea>
-        </label>
-
-        <div class="actions">
-          <button type="submit">Zapisz dzień</button>
-          <button type="button" id="exportCsvBtn" class="secondary">Eksport CSV</button>
-          <button type="button" id="clearAllBtn" class="danger">Wyczyść wszystko</button>
-        </div>
-
-        <p id="status" class="status" aria-live="polite"></p>
-      </form>
-    </section>
-
-    <section class="card">
-      <div class="summary">
-        <div>
-          <span>Dni</span>
-          <strong id="summaryDays">0</strong>
-        </div>
-        <div>
-          <span>Suma pracy</span>
-          <strong id="summaryWork">00:00</strong>
-        </div>
-        <div>
-          <span>Suma jazdy</span>
-          <strong id="summaryDrive">00:00</strong>
-        </div>
-      </div>
-
-      <h2>Historia wpisów</h2>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Licznik</th>
-              <th>Tacho</th>
-              <th>Jazda</th>
-              <th>Praca</th>
-              <th>Lokalizacja</th>
-              <th>Notatka</th>
-              <th>Akcje</th>
-            </tr>
-          </thead>
-          <tbody id="entriesBody"></tbody>
-        </table>
-      </div>
-    </section>
-  </main>
-
-  <script src="app.js"></script>
-</body>
-</html>
+          <input type="text" id="loca
