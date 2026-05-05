@@ -1,1 +1,120 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dziennik kierowcy</title>
+  <meta name="theme-color" content="#0f766e" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div>
+        <p class="eyebrow">Prywatna web app</p>
+        <h1>Dziennik kierowcy</h1>
+      </div>
+    </header>
 
+    <section class="card">
+      <h2>Nowy wpis dnia</h2>
+
+      <form id="entryForm" class="form">
+        <div class="grid">
+          <label>
+            <span>Data</span>
+            <input type="date" id="date" required />
+          </label>
+
+          <label>
+            <span>Stan licznika na koniec dnia</span>
+            <input type="number" id="odometerEnd" min="0" inputmode="numeric" required />
+          </label>
+
+          <label>
+            <span>Start tachografu</span>
+            <input type="time" id="tachographStart" required />
+          </label>
+
+          <label>
+            <span>Koniec tachografu</span>
+            <input type="time" id="tachographEnd" required />
+          </label>
+
+          <label>
+            <span>Czas jazdy</span>
+            <input type="time" id="drivingTime" required />
+          </label>
+
+          <label>
+            <span>Czas pracy</span>
+            <input type="text" id="workingTime" readonly placeholder="Liczy się automatycznie" />
+          </label>
+        </div>
+
+        <label>
+          <span>Lokalizacja końca dnia</span>
+          <input type="text" id="locationText" readonly placeholder="Kliknij „Pobierz lokalizację”" />
+        </label>
+
+        <div class="actions">
+          <button type="button" id="getLocationBtn">Pobierz lokalizację</button>
+          <button type="button" id="copyLocationBtn" class="secondary">Kopiuj współrzędne</button>
+        </div>
+
+        <label>
+          <span>Notatka</span>
+          <textarea id="note" rows="3" placeholder="Opcjonalnie"></textarea>
+        </label>
+
+        <div class="actions">
+          <button type="submit">Zapisz dzień</button>
+          <button type="button" id="exportCsvBtn" class="secondary">Eksport CSV</button>
+          <button type="button" id="clearAllBtn" class="danger">Wyczyść wszystko</button>
+        </div>
+
+        <p id="status" class="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="summary">
+        <div>
+          <span>Dni</span>
+          <strong id="summaryDays">0</strong>
+        </div>
+        <div>
+          <span>Suma pracy</span>
+          <strong id="summaryWork">00:00</strong>
+        </div>
+        <div>
+          <span>Suma jazdy</span>
+          <strong id="summaryDrive">00:00</strong>
+        </div>
+      </div>
+
+      <h2>Historia wpisów</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Licznik</th>
+              <th>Tacho</th>
+              <th>Jazda</th>
+              <th>Praca</th>
+              <th>Lokalizacja</th>
+              <th>Notatka</th>
+              <th>Akcje</th>
+            </tr>
+          </thead>
+          <tbody id="entriesBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
