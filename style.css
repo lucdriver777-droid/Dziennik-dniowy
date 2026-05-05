@@ -1,0 +1,192 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.app {
+  width: min(1100px, calc(100% - 24px));
+  margin: 24px auto 40px;
+}
+
+.header {
+  margin-bottom: 16px;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+h1, h2, p {
+  margin-top: 0;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  margin-bottom: 16px;
+}
+
+.form {
+  display: grid;
+  gap: 14px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: bold;
+}
+
+label span {
+  font-size: 14px;
+}
+
+input,
+textarea,
+button {
+  font: inherit;
+}
+
+input,
+textarea {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #fff;
+}
+
+input[readonly] {
+  background: #f9fafb;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  border: none;
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #0f766e;
+  color: white;
+  cursor: pointer;
+}
+
+button.secondary {
+  background: #475569;
+}
+
+button.danger {
+  background: #b91c1c;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.status {
+  margin: 0;
+  color: #475569;
+  min-height: 20px;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.summary div {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 14px;
+}
+
+.summary span {
+  display: block;
+  color: #64748b;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.summary strong {
+  font-size: 22px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 850px;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: #f8fafc;
+}
+
+.mono {
+  font-family: monospace;
+  font-size: 13px;
+  word-break: break-all;
+}
+
+.row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.row-actions button {
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+.empty {
+  text-align: center;
+  color: #6b7280;
+}
+
+@media (max-width: 720px) {
+  .grid,
+  .summary {
+    grid-template-columns: 1fr;
+  }
+
+  .app {
+    width: min(100% - 16px, 1100px);
+    margin-top: 16px;
+  }
+}
