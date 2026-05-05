@@ -36,6 +36,22 @@ h1, h2, p {
   margin-bottom: 16px;
 }
 
+.section-head,
+.toolbar,
+.month-filter-box,
+.actions,
+.row-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.section-head,
+.toolbar {
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
 .form {
   display: grid;
   gap: 14px;
@@ -98,12 +114,6 @@ button.danger {
   background: #b91c1c;
 }
 
-.actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
 .status {
   margin: 0;
   color: #475569;
@@ -114,7 +124,7 @@ button.danger {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
-  margin-bottom: 16px;
+  flex: 1;
 }
 
 .summary div {
@@ -135,6 +145,11 @@ button.danger {
   font-size: 22px;
 }
 
+.month-filter-box {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
 .table-wrap {
   overflow-x: auto;
 }
@@ -142,7 +157,7 @@ button.danger {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 850px;
+  min-width: 950px;
 }
 
 th,
@@ -164,8 +179,6 @@ th {
 }
 
 .row-actions {
-  display: flex;
-  gap: 8px;
   flex-wrap: wrap;
 }
 
@@ -179,10 +192,31 @@ th {
   color: #6b7280;
 }
 
-@media (max-width: 720px) {
+.badge {
+  display: inline-flex;
+  align-items: center;
+  background: #d1fae5;
+  color: #065f46;
+  padding: 8px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 860px) {
   .grid,
   .summary {
     grid-template-columns: 1fr;
+  }
+
+  .toolbar,
+  .section-head {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .app {
