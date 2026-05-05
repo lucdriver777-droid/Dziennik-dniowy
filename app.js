@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'driver-journal-v3';
+const STORAGE_KEY = 'driver-journal-v4';
 
 const form = document.getElementById('entryForm');
 const dateInput = document.getElementById('date');
@@ -32,19 +32,31 @@ function todayString() {
   return new Date().toISOString().slice(0, 10);
 }
 
+function createId() {
+  return `entry-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
 function loadEntries() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
-  } catch {
+  } catch (error) {
+    console.error('loadEntries error:', error);
     return [];
   }
 }
 
 function saveEntries(entries) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    return true;
+  } catch (error) {
+    console.error('saveEntries error:', error);
+    setStatus('Nie udało się zapisać danych w przeglądarce.');
+    return false;
+  }
 }
 
 function setStatus(message) {
@@ -108,7 +120,7 @@ function isValidDuration(value) {
 }
 
 function getFilteredEntries() {
-  const entries = loadEntries().sort((a, b) => b.date.localeCompare(a.date));
+  const entries = loadEntries().sort((a, b) => String(b.date).localeCompare(String(a.date)));
   const month = monthFilterInput.value;
 
   if (!month) return entries;
@@ -236,7 +248,7 @@ function render() {
   document.querySelectorAll('[data-delete]').forEach((button) => {
     button.addEventListener('click', () => {
       const nextEntries = loadEntries().filter((entry) => entry.id !== button.dataset.delete);
-      saveEntries(nextEntries);
+      if (!saveEntries(nextEntries)) return;
 
       if (editingId === button.dataset.delete) {
         resetEditMode();
@@ -273,7 +285,8 @@ function render() {
       try {
         await navigator.clipboard.writeText(entry.locationText);
         setStatus('Współrzędne skopiowane.');
-      } catch {
+      } catch (error) {
+        console.error('copy gps error:', error);
         setStatus('Nie udało się skopiować współrzędnych.');
       }
     });
@@ -309,6 +322,8 @@ function getLocation() {
       setStatus(`Pobrano lokalizację. Dokładność ok. ${Math.round(accuracy)} m.`);
     },
     (error) => {
+      console.error('geolocation error:', error);
+
       if (error.code === 1) {
         setStatus('Brak zgody na lokalizację. Odblokuj uprawnienie w przeglądarce.');
       } else if (error.code === 2) {
@@ -343,8 +358,44 @@ async function copyCurrentLocation() {
   try {
     await navigator.clipboard.writeText(text);
     setStatus('Współrzędne skopiowane.');
-  } catch {
+  } catch (error) {
+    console.error('copy current location error:', error);
     setStatus('Nie udało się skopiować współrzędnych.');
+  }
+}
+
+function downloadTextFile(filename, content, mimeType) {
+  try {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+
+    a.href = url;
+    a.download = filename;
+    a.target = '_blank';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    return true;
+  } catch (error) {
+    console.error('blob download error:', error);
+
+    try {
+      const dataUrl = `data:${mimeType};charset=utf-8,${encodeURIComponent(content)}`;
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = filename;
+      a.target = '_blank';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      return true;
+    } catch (fallbackError) {
+      console.error('data url download error:', fallbackError);
+      return false;
+    }
   }
 }
 
@@ -386,20 +437,22 @@ function exportCsv() {
     ];
   });
 
-  const csv = [header, ...rows].map((row) => row.join(';')).join('
+  const csv = [header, ...rows]
+    .map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(';'))
+    .join('
 ');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
 
-  a.href = url;
-  a.download = monthFilterInput.value
+  const filename = monthFilterInput.value
     ? `dziennik-kierowcy-${monthFilterInput.value}.csv`
     : 'dziennik-kierowcy.csv';
-  a.click();
 
-  URL.revokeObjectURL(url);
-  setStatus('Wyeksportowano CSV.');
+  const ok = downloadTextFile(filename, '﻿' + csv, 'text/csv');
+
+  if (ok) {
+    setStatus('Wyeksportowano CSV.');
+  } else {
+    setStatus('Nie udało się wyeksportować CSV.');
+  }
 }
 
 function handleSubmit(event) {
@@ -429,7 +482,7 @@ function handleSubmit(event) {
     : null;
 
   const record = {
-    id: editingId || crypto.randomUUID(),
+    id: editingId || createId(),
     date,
     odometerEnd,
     tachographStart,
@@ -448,11 +501,16 @@ function handleSubmit(event) {
 
   if (editingId) {
     nextEntries = entries.map((entry) => (entry.id === editingId ? record : entry));
-    saveEntries(nextEntries);
-    setStatus('Zapisano zmiany we wpisie.');
   } else {
     nextEntries = [record, ...entries];
-    saveEntries(nextEntries);
+  }
+
+  const ok = saveEntries(nextEntries);
+  if (!ok) return;
+
+  if (editingId) {
+    setStatus('Zapisano zmiany we wpisie.');
+  } else {
     setStatus('Wpis zapisany.');
   }
 
@@ -469,10 +527,15 @@ function clearAll() {
 
   if (!ok) return;
 
-  localStorage.removeItem(STORAGE_KEY);
-  resetEditMode();
-  render();
-  setStatus('Wszystkie wpisy zostały usunięte.');
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    resetEditMode();
+    render();
+    setStatus('Wszystkie wpisy zostały usunięte.');
+  } catch (error) {
+    console.error('clearAll error:', error);
+    setStatus('Nie udało się wyczyścić danych.');
+  }
 }
 
 dateInput.value = todayString();
